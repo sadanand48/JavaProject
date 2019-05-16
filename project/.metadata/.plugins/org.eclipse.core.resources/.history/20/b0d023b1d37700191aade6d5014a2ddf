@@ -1,0 +1,5 @@
+package com.sadanand.project;
+
+public class ChatRoomServerEndpoint {
+
+}

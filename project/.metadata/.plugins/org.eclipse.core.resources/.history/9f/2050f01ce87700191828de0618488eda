@@ -1,0 +1,49 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+String username=request.getParameter("username");
+HttpSession httpSession =request.getSession(true);
+httpSession.setAttribute("username",username); %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Multi-User Chat</title>
+<style>
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<%if(username!=null) { %>
+<mark>Username:<%=username %></mark><br>
+<div id="contact">  
+<textarea id="messagesTextArea" readonly="readonly" rows="10" cols="45"></textarea><br>
+<input type="text" id="messageText" size="50"/>
+<br>
+<input type="button" class="button" value="Send" onclick="sendMessage();"/>
+</div>
+<script>
+var websocket=new WebSocket("ws:localhost:8080/Chat/chatRoomServerEndpoint");
+websocket.onmessage=function processMessage(message) {
+	var jsonData=JSON.parse(message.data);
+	if (jsonData.message!=null) messagesTextArea.value+= jsonData.message + "\n";
+}
+function sendMessage() {
+	websocket.send(messageText.value);
+	messageText.value="";
+}
+</script>
+<%} %>
+</body>
+</html>
